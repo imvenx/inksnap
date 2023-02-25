@@ -1,3 +1,10 @@
+
+# Animate frame by frame with inkscape 
+
+![](/readmeAssets/preview.png)
+
+
+
 # Quasar App (inksnap)
 
 Animate frame by frame with inkscape
