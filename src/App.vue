@@ -6,7 +6,8 @@
         <q-btn style="margin-left: 1em" size="xs" icon="save" flat />
       </div>
 
-      <div style="-webkit-app-region:drag;">
+      <div style="-webkit-app-region:drag; text-align: center; user-select: none; font-weight: 800;">
+        inksnap
       </div>
 
       <div style="margin-left:auto">
