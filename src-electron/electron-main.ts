@@ -4,6 +4,9 @@ import os from 'os';
 import { screen } from 'electron';
 import { InkscapeH } from './handlers/inkscape_h';
 import { ConfigH } from './handlers/config_h';
+import { ProjectH } from './handlers/project_h';
+import { AnimM } from 'src/modules/anim_m';
+import { AnimH } from './handlers/anim_h';
 
 // needed in case process is undefined under Linux
 const platform = process.platform || os.platform();
@@ -16,7 +19,7 @@ try {
   }
 } catch (_) { }
 
-let mainWindow: BrowserWindow | undefined;
+export let mainWindow: BrowserWindow | undefined;
 
 function createWindow() {
 
@@ -24,7 +27,7 @@ function createWindow() {
    * Initial window options
    */
   const width = screen.getPrimaryDisplay().workAreaSize.width
-  const height = 150
+  const height = 200
   mainWindow = new BrowserWindow({
 
     icon: path.resolve(__dirname, 'icons/icon.png'), // tray icon
@@ -76,6 +79,10 @@ app.whenReady().then(() => {
 
   ipcMain.handle('createNewProject', ({ }) => InkscapeH.createNewProject())
 
+  ipcMain.handle('getConfig', ({ }) => ConfigH.get())
+  // ipcMain.handle('getAnimState', ({ }) => AnimH.get())
+
+  ProjectH.init()
 
 });
 

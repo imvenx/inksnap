@@ -4,28 +4,31 @@
         <div style="padding:1em; display: flex; flex-direction: column; gap:3%; overflow: auto;">
 
             <div style="display: flex; gap:1%">
-                <q-btn outline @click="createNewProject" :loading="creatingProject">New</q-btn>
+                <q-btn outline @click="createNewProject">
+                    <span v-if="!isCreatingProject">New</span>
+                    <q-spinner v-else />
+                </q-btn>
                 <q-btn outline>Open</q-btn>
             </div>
 
-            <div style="display: grid; grid-template-columns: auto auto auto;">
+            <div style="display: grid; grid-template-columns: 100px 40px auto;">
                 <u>Inkscape Path:</u>
 
                 <q-btn icon="edit" size="xs" flat @click="setInkscapePath"></q-btn>
 
-                <div :title="ConfigM.inkscapePath.toString()" class="configListItem">
-                    {{ ConfigM.inkscapePath }}
+                <div :title="ConfigM.config?.inkscapePath" class="configListItem">
+                    {{ ConfigM.config?.inkscapePath }}
                 </div>
 
             </div>
 
-            <div style="display: grid; grid-template-columns: auto auto auto;">
+            <div style="display: grid; grid-template-columns: 100px 40px auto;">
                 <u>Projects Path:</u>
 
                 <q-btn icon="edit" size="xs" flat @click="setProjectsPath"></q-btn>
 
-                <div :title="ConfigM.projectsPath.toString()" class="configListItem">
-                    {{ ConfigM.projectsPath }}
+                <div :title="ConfigM.config?.projectsPath" class="configListItem">
+                    {{ ConfigM.config?.projectsPath }}
                 </div>
 
             </div>
@@ -53,27 +56,28 @@
 </template>
 
 <script setup lang="ts">
-import { ConfigM } from 'src/modules/configM';
-import { eapi } from 'src/modules/eapi';
+import { ConfigM } from 'src/modules/config_m';
+import { eapiM } from 'src/modules/eapi_m';
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 
-const creatingProject = ref(false)
+const router = useRouter()
+const isCreatingProject = ref(false)
 
 async function setInkscapePath() {
-    const path = await eapi.setInkscapePath()
-    if (path) ConfigM.inkscapePath = path
+    const path = await eapiM.setInkscapePath()
 }
 
 async function setProjectsPath() {
-    const path = await eapi.setProjectsPath()
-    if (path) ConfigM.projectsPath = path
+    const path = await eapiM.setProjectsPath()
 }
 
 async function createNewProject() {
-    // creatingProject.value = true
-    const path = await eapi.createNewProject()
-    creatingProject.value = false
-    if (path) ConfigM.projectPath = path
+    isCreatingProject.value = true
+    const success = await eapiM.createNewProject()
+    isCreatingProject.value = false
+
+    if (success) router.push('/animator')
 }
 
 </script>

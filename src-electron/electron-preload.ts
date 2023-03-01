@@ -12,4 +12,22 @@ contextBridge.exposeInMainWorld('electronAPI', {
     createNewProject: () => ipcRenderer.invoke('createNewProject'),
 
 
+    getConfig: () => ipcRenderer.invoke('getConfig'),
+    getAnimState: () => ipcRenderer.invoke('getAnimState'),
+
+
+
+
+
+
+
+
+
+    // Main to renderer
+
+    onConfigUpdate: (callback: any) => ipcRenderer.on('onConfigUpdate', callback),
+    onCurrentFrameUpdate: (callback: any) => ipcRenderer.on('onCurrentFrameUpdate', callback),
+
+
+
 })

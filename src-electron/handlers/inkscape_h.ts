@@ -1,9 +1,10 @@
 import { exec as _exec } from "child_process";
 import { promisify } from "util";
 const exec = promisify(_exec);
-import { promises as fsPromises } from "fs"
+import { promises as fsPromises, watchFile } from "fs"
 import { dialog } from "electron";
 import { ConfigH } from "./config_h";
+import { AnimH } from "./anim_h";
 
 export abstract class InkscapeH {
 
@@ -11,7 +12,7 @@ export abstract class InkscapeH {
         try {
 
             const saveDialogResponse = await dialog.showSaveDialog({
-                defaultPath: ConfigH.projectsPath(),
+                defaultPath: ConfigH.projectsPath,
                 title: "Select new project path",
                 properties: ['showOverwriteConfirmation'],
             })
@@ -24,13 +25,15 @@ export abstract class InkscapeH {
 
             const filePath = `${directoryPath}/${directoryPath.split('/').pop()}.svg`
 
-            this.closeInkscape()
+            await this.closeInkscape()
 
             await this.createSvg(filePath)
 
-            await this.openSvg(filePath)
+            ConfigH.setProjectPath(directoryPath)
 
-            return directoryPath
+            this.openInkscape(filePath)
+
+            return true
 
         } catch (e) {
             console.log(e)
@@ -47,27 +50,37 @@ export abstract class InkscapeH {
         if (!path) return
 
         ConfigH.saveInkscapePath(path)
-        return path
     }
 
 
 
+    static openInkscape(filePath: string) {
+        // const openSvgCommand = `${ConfigH.inkscapePath} "${filePath}"`
+        // const openSvgResult = exec(openSvgCommand)
+        // console.log('Open svg result: ', openSvgResult)
 
+        watchFile(filePath, { interval: 200 }, async (curr, prev) => {
+            const fileContent = await fsPromises.readFile(filePath, { encoding: 'utf-8' })
+            AnimH.updateCurrentFrame(fileContent)
+        })
 
-
-    private static async closeInkscape() {
-        const closeWindowCommand = `${ConfigH.inkscapePath()} -q --actions="window-close"`
-        await exec(closeWindowCommand)
     }
+
+    static async closeInkscape() {
+        // const closeWindowCommand = `${ConfigH.inkscapePath} -q --actions="window-close"`
+        // const closeInkscapeResult = await exec(closeWindowCommand)
+        // console.log('Close inkscape result: ', closeInkscapeResult)
+    }
+
+
+
 
     private static async createSvg(filePath: string) {
-        const createSvgCommand = `${ConfigH.inkscapePath()} --actions="file-new; export-type:svg; export-filename:${filePath}; export-do"`
-        const resCreateSvg = await exec(createSvgCommand)
+        const createSvgCommand = `${ConfigH.inkscapePath} --actions="file-new; export-type:svg; export-filename:${filePath}; export-do"`
+        const createSvgResult = await exec(createSvgCommand)
+        // console.log('Create svg result: ', createSvgResult)
     }
 
-    private static async openSvg(filePath: string) {
-        const openSvgCommand = `${ConfigH.inkscapePath()} "${filePath}"`
-        const resOpenSvg = await exec(openSvgCommand)
-    }
+
 
 }
