@@ -4,7 +4,7 @@ html {
     overflow: hidden;
 }
 
-
+/* 
 ::-webkit-scrollbar {
     width: .5rem;
     height: .5rem;
@@ -26,4 +26,4 @@ html {
 
 ::-webkit-scrollbar-corner {
     background: transparent;
-}
+} */

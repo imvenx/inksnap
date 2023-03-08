@@ -6,8 +6,8 @@ export abstract class ProjectH {
     static async init() {
         if (!ConfigH.projectPath) return
 
-        await InkscapeH.closeInkscape()
-        InkscapeH.openInkscape(ConfigH.projectPathSvg)
+        // await InkscapeH.closeInkscape()
+        // InkscapeH.openInkscape(ConfigH.projectPathSvg)
     }
 
 }

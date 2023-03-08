@@ -16,11 +16,13 @@ export abstract class eapiM {
     static getConfig = () => _eapi.getConfig()
     static getAnimState = () => _eapi.getAnimState()
 
+    static openInkscape = () => _eapi.openInkscape()
 
+    static updateInkscape = (svg: string) => _eapi.updateInkscape(svg)
 
 
     // Main to renderer
 
     static onConfigUpdate = (cb: any) => _eapi.onConfigUpdate(cb)
-    static onCurrentFrameUpdate = (cb: any) => _eapi.onCurrentFrameUpdate(cb)
+    static onSvgUpdate = (cb: any) => _eapi.onSvgUpdate(cb)
 }

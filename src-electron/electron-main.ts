@@ -1,12 +1,11 @@
-import { app, BrowserWindow, ipcMain, nativeTheme } from 'electron';
+import { app, BrowserWindow, ipcMain, MessageChannelMain, nativeTheme, utilityProcess } from 'electron';
 import path from 'path';
 import os from 'os';
 import { screen } from 'electron';
 import { InkscapeH } from './handlers/inkscape_h';
 import { ConfigH } from './handlers/config_h';
 import { ProjectH } from './handlers/project_h';
-import { AnimM } from 'src/modules/anim_m';
-import { AnimH } from './handlers/anim_h';
+import { ChildProcess, ChildProcessWithoutNullStreams, exec, execSync, fork, spawn } from 'child_process';
 
 // needed in case process is undefined under Linux
 const platform = process.platform || os.platform();
@@ -55,11 +54,54 @@ function createWindow() {
   if (process.env.DEBUGGING) {
     // if on DEV or Production with debug enabled
     mainWindow.webContents.openDevTools();
+
+
+    try {
+      // exec(`${ConfigH.inkscapePath} ${ConfigH.projectPathSvg}`)
+
+      // let ls: ChildProcessWithoutNullStreams
+      // ls = spawn(`${ConfigH.inkscapePath}`, ['-q', '--shell'])
+      // setTimeout(() => {
+
+      // }, 5000);
+
+      // setInterval(() => {
+      //   if (!InkscapeH.inkscapeProcess) return
+      //   InkscapeH.inkscapeProcess.stdin.write(`select-clear
+      //   `)
+
+
+      //   InkscapeH.inkscapeProcess.stdout.on('data', (data) => {
+      //     console.log(`stdout: ${data}`);
+      //   });
+
+      //   InkscapeH.inkscapeProcess.stderr.on('error', (err) => console.log('stderr: ', err))
+
+      //   InkscapeH.inkscapeProcess.on('close', (code) => {
+      //     console.log(`child process close all stdio with code ${code}`);
+      //   });
+
+      //   InkscapeH.inkscapeProcess.on('exit', (code) => {
+      //     console.log(`child process exited with code ${code}`);
+      //   });
+
+      //   InkscapeH.inkscapeProcess.on('error', (err) => console.log('err: ', err))
+
+      //   InkscapeH.inkscapeProcess.on('message', (msg) => console.log('msg: ', msg))
+      // }, 8000);
+
+    } catch (e) {
+      console.log('error: ', e)
+    }
+
   } else {
     // we're on production; no access to devtools pls
     mainWindow.webContents.on('devtools-opened', () => {
       mainWindow?.webContents.closeDevTools();
     });
+
+    // ProjectH.init()
+
 
   }
 
@@ -82,7 +124,9 @@ app.whenReady().then(() => {
   ipcMain.handle('getConfig', ({ }) => ConfigH.get())
   // ipcMain.handle('getAnimState', ({ }) => AnimH.get())
 
-  ProjectH.init()
+  ipcMain.handle('openInkscape', ({ }) => InkscapeH.openInkscape(ConfigH.projectPathSvg))
+
+  ipcMain.handle('updateInkscape', ({ }, p) => InkscapeH.updateInkscape(p))
 
 });
 

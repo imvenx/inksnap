@@ -16,17 +16,16 @@ contextBridge.exposeInMainWorld('electronAPI', {
     getAnimState: () => ipcRenderer.invoke('getAnimState'),
 
 
+    openInkscape: () => ipcRenderer.invoke('openInkscape'),
 
-
-
-
+    updateInkscape: (p: any) => ipcRenderer.invoke('updateInkscape', p),
 
 
 
     // Main to renderer
 
     onConfigUpdate: (callback: any) => ipcRenderer.on('onConfigUpdate', callback),
-    onCurrentFrameUpdate: (callback: any) => ipcRenderer.on('onCurrentFrameUpdate', callback),
+    onSvgUpdate: (callback: any) => ipcRenderer.on('onSvgUpdate', callback),
 
 
 
